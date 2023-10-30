@@ -81,6 +81,28 @@ class TestCreateProduct(object):
         assert response.json()['error'] == 'VALIDATION_ERROR'
 
 
+class TestDeleteProduct(object):
+    def test_can_delete_product(self, gateway_service, web_session):
+        response = web_session.delete(
+            '/products/the_odyssey'
+        )
+
+        assert response.status_code == 200
+
+    def test_delete_product_fails_with_not_found(self, gateway_service, web_session):
+        gateway_service.products_rpc.delete.side_effect = (
+            ProductNotFound('Product ID 12345 does not exist'))
+
+        response = web_session.delete(
+            '/products/12345'
+        )
+
+        assert response.status_code == 404
+        assert response.json()['error'] == 'PRODUCT_NOT_FOUND'
+        assert response.json()['message'] == 'Product ID 12345 does not exist'
+
+
+
 class TestGetOrder(object):
 
     def test_can_get_order(self, gateway_service, web_session):

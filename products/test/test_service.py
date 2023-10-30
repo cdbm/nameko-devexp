@@ -32,6 +32,13 @@ def test_get_product_fails_on_not_found(service_container):
             get(111)
 
 
+def test_delete_product(product_id, redis_client, service_container):
+
+    with entrypoint_hook(service_container, 'delete') as delete:
+        delete(product_id)
+
+    assert not redis_client.get(product_id)
+
 def test_list_products(products, service_container):
 
     with entrypoint_hook(service_container, 'list') as list_:

@@ -44,6 +44,15 @@ def create_product(redis_client, product):
 
 
 @pytest.fixture
+def delete(product_id, redis_client):
+    redis_client.delete(product_id)
+
+@pytest.fixture
+def product_id():
+    return "LZ129"
+
+
+@pytest.fixture
 def products(create_product):
     return [
         create_product(
