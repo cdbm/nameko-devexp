@@ -38,6 +38,22 @@ echo
 echo "=== Getting product id: the_odyssey ==="
 curl -s "${STD_APP_URL}/products/the_odyssey" | jq .
 
+# Test: Create Product to be Deleted
+echo "=== Creating a product id: the_voyager to be deleted ==="
+curl -s -XPOST  "${STD_APP_URL}/products" \
+    -H 'accept: application/json' \
+    -H 'Content-Type: application/json' \
+    -d '{"id": "the_voyager", "title": "The Voyager", "passenger_capacity": 20, "maximum_speed": 10, "in_stock": 7}'
+echo
+
+# Test: Delete Product
+echo "=== Deleting product id: the_voyager ==="
+curl -s -XDELETE "${STD_APP_URL}/products/the_voyager" | jq .
+
+# Test: Verify Product Deletion (expect PRODUCT_NOT_FOUND error)
+echo "=== Getting deleted product id: the_voyager ==="
+curl -s "${STD_APP_URL}/products/the_voyager" | jq .
+
 # Test: Create Order
 echo "=== Creating Order ==="
 ORDER_ID=$(
