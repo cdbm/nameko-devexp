@@ -201,12 +201,8 @@ class GatewayService(object):
 
     def _create_order(self, order_data):
         # check order product ids are valid
-        valid_product_ids = {prod['id'] for prod in self.products_rpc.list()}
         for item in order_data['order_details']:
-            if item['product_id'] not in valid_product_ids:
-                raise ProductNotFound(
-                    "Product Id {}".format(item['product_id'])
-                )
+            product = self.products_rpc.get(item['product_id'])
 
         # Call orders-service to create the order.
         # Dump the data through the schema to ensure the values are serialized
