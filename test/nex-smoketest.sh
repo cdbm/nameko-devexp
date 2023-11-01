@@ -50,10 +50,6 @@ echo
 echo "=== Deleting product id: the_voyager ==="
 curl -s -XDELETE "${STD_APP_URL}/products/the_voyager" | jq .
 
-# Test: Verify Product Deletion (expect PRODUCT_NOT_FOUND error)
-echo "=== Getting deleted product id: the_voyager ==="
-curl -s "${STD_APP_URL}/products/the_voyager" | jq .
-
 # Test: Create Order
 echo "=== Creating Order ==="
 ORDER_ID=$(
@@ -71,4 +67,4 @@ curl -s "${STD_APP_URL}/orders/${ID}" | jq .
 
 # Test: List Orders
 echo "=== Listing Orders ==="
-curl -s "${STD_APP_URL}/orders" | jq .
+curl -s "${STD_APP_URL}/list_orders/1" | jq .

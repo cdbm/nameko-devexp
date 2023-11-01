@@ -42,7 +42,7 @@ def test_will_raise_when_order_not_found(orders_rpc):
 
 
 def test_list_orders(orders_rpc, order):
-    response = orders_rpc.list_orders()
+    response = orders_rpc.list_orders(1)
 
     assert response[0]['id'] == order.id
 

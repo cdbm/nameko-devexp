@@ -240,7 +240,7 @@ class TestListOrders(object):
         ]
 
         # call the gateway service to list orders #1
-        response = web_session.get('/orders')
+        response = web_session.get('/list_orders/1')
         assert response.status_code == 200
 
         expected_response = [{
@@ -282,7 +282,7 @@ class TestListOrders(object):
         assert expected_response == response.json()
 
         # check dependencies called as expected
-        assert [call()] == gateway_service.orders_rpc.list_orders.call_args_list
+        assert [call(1)] == gateway_service.orders_rpc.list_orders.call_args_list
         assert [call('the_odyssey'), call('the_enigma')] == gateway_service.products_rpc.get.call_args_list
 
 

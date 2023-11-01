@@ -23,8 +23,11 @@ class OrdersService:
         return OrderSchema().dump(order).data
     
     @rpc
-    def list_orders(self):
-        orders = self.db.query(Order).all()
+    def list_orders(self, page_number):
+        if page_number < 1:
+            raise ValueError('Invalid page number')
+
+        orders = self.db.query(Order).limit(10).offset((page_number-1)*10).all()
 
         return OrderSchema(many=True).dump(orders).data
 

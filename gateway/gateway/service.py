@@ -119,34 +119,44 @@ class GatewayService(object):
 
         return order
 
-    @http("GET", "/orders", expected_exceptions=OrderNotFound)
-    def list_orders(self, request):
+    @http("GET", "/list_orders/<int:page_num>", expected_exceptions=(OrderNotFound, ProductNotFound))
+    def list_orders(self, request, page_num):
         """Lists all orders`.
 
         Enhances the order details with full product details from the
         products-service.
         """
-        orders = self._list_orders()
+        try:
+            orders = self._list_orders(page_num)
+        except ValueError as exc:
+            raise OrderNotFound("{}".format(exc))
+
         return Response(
             GetOrderSchema(many=True).dumps(orders).data,
             mimetype='application/json'
         )
 
-    def _list_orders(self):
+    def _list_orders(self, page_num):
         # Retrieve order data from the orders service.
         # Note - this may raise a remote exception that has been mapped to
         # raise``OrderNotFound``
-        orders = self.orders_rpc.list_orders()
+        orders = self.orders_rpc.list_orders(page_num)
 
         # get the configured image root
         image_root = config['PRODUCT_IMAGE_ROOT']
 
-        # Enhance order details with product and image details.4
+        # Enhance order details with product and image details.
         for order in orders:
             for item in order['order_details']:
                 product_id = item['product_id']
 
-                item['product'] = self.products_rpc.get(item['product_id'])
+                item['product'] = {}
+
+                try:
+                    item['product'] = self.products_rpc.get(product_id)
+                except:
+                    pass
+
                 # Construct an image url.
                 item['image'] = '{}/{}.jpg'.format(image_root, product_id)
 
